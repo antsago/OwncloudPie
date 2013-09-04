@@ -3,6 +3,8 @@
 #  OwncloudPie - Shell script for installing and updating Owncloud on the Raspberry Pi.
 # 
 #  (c) Copyright 2012  Florian Müller (petrockblock@gmail.com)
+#
+#  Modified by Antonio Sanchez Gomez to remove unwanted behaviour (overclocking, swap file resizing...)
 # 
 #  OwncloudPie homepage: https://github.com/petrockblog/OwncloudPie
 # 
@@ -184,7 +186,7 @@ function main_newinstall_nginx()
 	groupadd www-data
 	usermod -a -G www-data www-data
 
-	# install all needed packages, e.g., Apache, PHP, SQLite
+	# install all needed packages, e.g., nginx, PHP, SQLite - remove apache2
   apt-get remove -y apache2
   apt-get install -y nginx sendmail sendmail-bin openssl ssl-cert php5-cli php5-sqlite php5-gd php5-curl php5-common php5-cgi sqlite php-pear php-apc git-core
   apt-get install -y autoconf automake autotools-dev curl libapr1 libtool curl libcurl4-openssl-dev php-xml-parser php5 php5-dev php5-gd php5-fpm
@@ -192,7 +194,7 @@ function main_newinstall_nginx()
   apt-get autoremove -y
 
 	# set memory split to 240 MB RAM and 16 MB video
-  ensureKeyValueShort "gpu_mem" "16" "/boot/config.txt"
+        # ensureKeyValueShort "gpu_mem" "16" "/boot/config.txt"
 
 	# generate self-signed certificate that is valid for one year
   installCertificateNginx
@@ -213,14 +215,14 @@ function main_newinstall_nginx()
 	/etc/init.d/nginx restart
 
 	# set ARM frequency to 800 MHz (or use the raspi-config tool to set clock speed)
-  ensureKeyValueShort "arm_freq" "800" "/boot/config.txt"
-  ensureKeyValueShort "sdram_freq" "400" "/boot/config.txt"
-  ensureKeyValueShort "core_freq" "250" "/boot/config.txt"
+# ensureKeyValueShort "arm_freq" "800" "/boot/config.txt"
+# ensureKeyValueShort "sdram_freq" "400" "/boot/config.txt"
+# ensureKeyValueShort "core_freq" "250" "/boot/config.txt"
 
 	# resize swap file to 512 MB
-  ensureKeyValueShort "CONF_SWAPSIZE" "512" "/etc/dphys-swapfile"
-	dphys-swapfile setup
-	dphys-swapfile swapon
+# ensureKeyValueShort "CONF_SWAPSIZE" "512" "/etc/dphys-swapfile"
+#	dphys-swapfile setup
+#	dphys-swapfile swapon
 
   mkdir -p /var/www/owncloud
   downloadLatestOwncloudRelease
@@ -230,7 +232,7 @@ function main_newinstall_nginx()
 	chown -R www-data:www-data /var/www
 
   # enable US UTF-8 locale
-  sudo sed -i -e "s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
+#  sudo sed -i -e "s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
 
 	# finish the script
 	myipaddress=$(hostname -I | tr -d ' ')
@@ -261,7 +263,7 @@ function main_newinstall_apache()
   apt-get install -y apache2 openssl sendmail sendmail-bin ssl-cert libapache2-mod-php5 php5-cli php5-sqlite php5-gd php5-curl php5-common php5-cgi sqlite php-pear php-apc git-core ca-certificates dphys-swapfile bzip2
 
   # Change RAM settings 16 MB video RAM
-  ensureKeyValueShort "gpu_mem" "16" "/boot/config.txt"
+# ensureKeyValueShort "gpu_mem" "16" "/boot/config.txt"
 
   # generate self-signed certificate that is valid for one year
   installCertificateApache
@@ -286,14 +288,14 @@ function main_newinstall_apache()
   mv tmp /etc/apache2/apache2.conf
 
   # set ARM frequency to 800 MHz (attention: should be safe, but do this at your own risk)
-  ensureKeyValueShort "arm_freq" "800" "/boot/config.txt"
-  ensureKeyValueShort "sdram_freq" "450" "/boot/config.txt"
-  ensureKeyValueShort "core_freq" "350" "/boot/config.txt"
+# ensureKeyValueShort "arm_freq" "800" "/boot/config.txt"
+# ensureKeyValueShort "sdram_freq" "450" "/boot/config.txt"
+# ensureKeyValueShort "core_freq" "350" "/boot/config.txt"
 
   # resize swap file to 512 MB
-  ensureKeyValueShort "CONF_SWAPSIZE" "512" "/etc/dphys-swapfile"
-  dphys-swapfile setup
-  dphys-swapfile swapon
+# ensureKeyValueShort "CONF_SWAPSIZE" "512" "/etc/dphys-swapfile"
+# dphys-swapfile setup
+# dphys-swapfile swapon
 
   # enable SSL site
   a2ensite default-ssl
@@ -310,13 +312,14 @@ function main_newinstall_apache()
   /etc/init.d/apache2 reload
 
   # enable US UTF-8 locale
-  sudo sed -i -e "s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
+# sudo sed -i -e "s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g" /etc/locale.gen
 
   # finish the script
   myipaddress=$(hostname -I | tr -d ' ')
   dialog --backtitle "PetRockBlock.com - OwncloudPie Setup." --msgbox "If everything went right, Owncloud should now be available at the URL https://$myipaddress/owncloud. You have to finish the setup by visiting that site. Before that, we are going to reboot the Raspberry." 20 60    
     
-  reboot
+#  reboot
+  echo "Rememeber to reboot as soon as possible to complete the installation"
 }
 
 function main_update()

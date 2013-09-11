@@ -193,6 +193,11 @@ function main_newinstall_nginx()
   apt-get install -y memcached php5-memcache varnish dphys-swapfile bzip2
   apt-get autoremove -y
 
+	#Stop, start and restart the processes
+  service apache2 stop
+  service nginx start
+  service php-fpm restart
+
 	# set memory split to 240 MB RAM and 16 MB video
         # ensureKeyValueShort "gpu_mem" "16" "/boot/config.txt"
 

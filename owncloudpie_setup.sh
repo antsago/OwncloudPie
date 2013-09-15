@@ -92,7 +92,7 @@ function downloadLatestOwncloudRelease()
     latestrelease=${latestrelease:10}
     wget "$latestrelease"
   fi
-  tar -xjf "$(basename $latestrelease)"
+  tar -xvjf "$(basename $latestrelease)"
   rm "$(basename $latestrelease)"
 	rm Changelog
 }

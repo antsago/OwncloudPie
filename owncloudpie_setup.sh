@@ -93,7 +93,7 @@ function downloadLatestOwncloudRelease()
     wget "$latestrelease"
   fi
   tar -xvjf "$(basename $latestrelease)"
-  rm "$(basename $latestrelease)"
+  rm "$(bmsename $latestrelease)"
 	rm Changelog
 }
 
@@ -330,7 +330,7 @@ function main_newinstall_apache()
 function main_update()
 {
 	downloadLatestOwncloudRelease
-	cp -r owncloud/* /var/www/owncloud/
+	cp -vr owncloud/* /var/www/owncloud/
 	rm -rf owncloud
 
   chown -R www-data:www-data /var/www
